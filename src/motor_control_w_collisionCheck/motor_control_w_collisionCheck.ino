@@ -133,17 +133,22 @@ void stopMoving()
   digitalWrite(motorPin3, LOW);
   digitalWrite(motorPin4, LOW); 
 }
+bool notBrake = false;
 bool isForward = false;
 void handleForward(){
   server.send(200,"text/plain","Moving Forward");
   isForward = true;
+  notBrake = true;
 }
+
 void handleMovingForward(){
   if (isForward && getDistance()>20) {
     movingForward();
   }
-  if (getDistance()<20) {
+  if (getDistance()<20 && notBrake) {
     Serial.println("Collision Detected.");
+    stopMoving();
+    notBrake = false;
   }
 }
 void handleBackward(){
